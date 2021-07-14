@@ -4,9 +4,7 @@ A implementation of Faster RCNN and MaskRCNN for object detection and instance s
 
 <figure class="video_container">
   <video controls="true" allowfullscreen="true" poster="assets/simulation.webm">
-    <source src="path/to/video.mp4" type="video/mp4">
-    <source src="path/to/video.ogg" type="video/ogg">
-    <source src="path/to/video.webm" type="video/webm">
+    <source src="assets/simulation.webm" type="video/webm">
   </video>
 </figure>
 
