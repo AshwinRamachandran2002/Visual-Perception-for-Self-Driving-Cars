@@ -20,9 +20,10 @@ Training data was collected form [awesome-carla.org](https://github.com/Amin-Tgz
 Matterport's MRCNN was changed to make it compatible with tensorflow>=2.1.0 and python>=3.5.
 
 Fine tuning ran for 6 epochs on the additional training data. 
-[Model used for training and preprocessing](object)
 
+[My trained model used for detection](https://drive.google.com/file/d/10Xk5-3wapfE6O2YaKTz3psicrTQau4e2/view?usp=sharing)
 
+[To use my modified version of matterport's mask rcnn](/Object_Detection/mrcnn)
 
 ## Self Driving Simulation
 
