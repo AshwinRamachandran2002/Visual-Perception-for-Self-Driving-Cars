@@ -15,6 +15,9 @@ Video is run at 2.5x to visualize
 
 ### Carla environment on Mask RCNN object detection model
 
+![detection](https://user-images.githubusercontent.com/77834936/126024259-d3ddbcf5-0a60-4dfe-83ce-54657cc52ed5.png)
+
+
 
 ## CARLA SIMULATOR
 
