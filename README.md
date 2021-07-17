@@ -3,10 +3,18 @@
 A implementation of Faster RCNN and MaskRCNN for object detection and instance segmenataion using the CARLA Simulator.
 
 
+### Carla Vehicle on Automation of Steering Controls
+
+
+
 
 https://user-images.githubusercontent.com/77834936/125677267-bc32b6d5-e2e4-4fe9-b39c-845eb43a25df.mp4
 
+
 Video is run at 2.5x to visualize
+
+### Carla environment on Mask RCNN object detection model
+
 
 ## CARLA SIMULATOR
 
@@ -26,5 +34,11 @@ Fine tuning ran for 6 epochs on the additional training data.
 [To use my modified version of matterport's mask rcnn](/Object_Detection/mrcnn)
 
 ## Self Driving Simulation
+
+Insipiration for the pipeline- [NVIDIA PilotNet](https://arxiv.org/pdf/1604.07316.pdf)
+
+Pre trained model usedd for transfer learning- [ Simulation in GTA5](https://github.com/Will-J-Gale/GTA5-Self-Driving-Car)
+
+
 
 
