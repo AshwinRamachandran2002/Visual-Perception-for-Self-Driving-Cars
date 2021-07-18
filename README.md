@@ -1,4 +1,6 @@
-# Visual Perception of SelfDriving Cars
+# Visual Perception of Self Driving Cars
+
+Done as a part of IIT Bombay WNCC's Summer of Code program.
 
 A implementation of Faster RCNN and MaskRCNN for object detection and instance segmenataion using the CARLA Simulator.
 
