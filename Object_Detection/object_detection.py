@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
-# Copyright (c) 2019 Aptiv
-#
-# This work is licensed under the terms of the MIT license.
-# For a copy, see <https://opensource.org/licenses/MIT>.
+# My implementation of Carla's object detection
+# Author- Ashwin Ramachandran
+
+
 
 """
 An example of client-side bounding boxes with basic car controls.
@@ -64,56 +64,56 @@ try:
 except ImportError:
     raise RuntimeError('cannot import numpy, make sure numpy package is installed')
 
+
+
 VIEW_WIDTH = 640
 VIEW_HEIGHT = 480
 VIEW_FOV = 110
+
 ROOT_DIR = os.path.abspath("../")
+
+
 
 # Import Mask RCNN
 sys.path.append(ROOT_DIR)  # To find local version of the library
+
 from mrcnn import utils
 from mrcnn import visualize
 import mrcnn.model as modellib
+
 from mrcnn import visualize
 from mrcnn.config import Config
+
 BB_COLOR = (248, 64, 24)
+
+
+
 def loadmodel():
-  
+    """
+    Function to load pre trained model fine tuned on carla dataset
+    """
     
     sys.path.append(os.path.join(ROOT_DIR, "samples/coco/"))  # To find local version
 
     COCO_MODEL_PATH = os.path.join(ROOT_DIR, "mask_rcnn_coco.h5")
-    # Download COCO trained weights from Releases if needed
-    if not os.path.exists(COCO_MODEL_PATH):
-        utils.download_trained_weights(COCO_MODEL_PATH)
-
+    
     IMAGE_DIR = os.path.join(ROOT_DIR, "images")
+
     class CocoConfig(Config):
-        """Configuration for training on MS COCO.
+        """Configuration for inference on MS COCO model.
         Derives from the base Config class and overrides values specific
         to the COCO dataset.
         """
-        # Give the configuration a recognizable name
         NAME = "coco"
 
-        # We use a GPU with 12GB memory, which can fit two images.
-        # Adjust down if you use a smaller GPU.
         IMAGES_PER_GPU = 2
 
-        # Uncomment to train on 8 GPUs (default is 1)
-        # GPU_COUNT = 8
-
-        # Number of classes (including background)
-        NUM_CLASSES = 1 + 80  # COCO has 80 classes
+        NUM_CLASSES = 1 + 1 # 1+80 for coco
 
     class InferenceConfig(CocoConfig):
-        # Set batch size to 1 since we'll be running inference on
-        # one image at a time. Batch size = GPU_COUNT * IMAGES_PER_GPU
         GPU_COUNT = 1
         IMAGES_PER_GPU = 1
-        #RPN_NMS_THRESHOLD = 0.5
-        #DETECTION_MIN_CONFIDENCE = 0.3
-        #DETECTION_NMS_THRESHOLD = 0.5
+        
 
     config = InferenceConfig()
         # Recreate the model in inference mode
@@ -121,17 +121,16 @@ def loadmodel():
                             config=config,
                             model_dir=ROOT_DIR)
 
-    # Get path to saved weights
-    # Either set a specific path or find last trained weights
     model_path = os.path.join(ROOT_DIR, "examples/mask_rcnn.h5")
 
-    # Load trained weights
     print("Loading weights from ", model_path)
     model.load_weights(model_path, by_name=True)
     return model
 
 
 model=loadmodel()
+
+
 # ==============================================================================
 # -- ClientSideBoundingBoxes ---------------------------------------------------
 # ==============================================================================
@@ -142,17 +141,6 @@ class ClientSideBoundingBoxes(object):
     This is a module responsible for creating 3D bounding boxes and drawing them
     client-side on pygame surface.
     """
-
-    @staticmethod
-    def get_bounding_boxes(vehicles, camera):
-        """
-        Creates 3D bounding boxes based on carla vehicle list and camera.
-        """
-
-        bounding_boxes = [ClientSideBoundingBoxes.get_bounding_box(vehicle, camera) for vehicle in vehicles]
-        # filter objects behind camera
-        bounding_boxes = [bb for bb in bounding_boxes if all(bb[:, 2] > 0)]
-        return bounding_boxes
 
     @staticmethod
     def draw_bounding_boxes(display, boxes):
@@ -174,125 +162,14 @@ class ClientSideBoundingBoxes(object):
             pygame.draw.line(bb_surface, BB_COLOR,  (x2,y2),(x2,y1))
             pygame.draw.line(bb_surface, BB_COLOR,  (x2,y1),(x1,y1))
         
-        # for bbox in bounding_boxes:
-        #     points = [(int(bbox[i, 0]), int(bbox[i, 1])) for i in range(8)]
-        #     # draw lines
-        #     # base
-        #     # pygame.draw.line(bb_surface, BB_COLOR, points[0], points[1])
-        #     # pygame.draw.line(bb_surface, BB_COLOR, points[0], points[1])
-        #     # pygame.draw.line(bb_surface, BB_COLOR, points[1], points[2])
-        #     # pygame.draw.line(bb_surface, BB_COLOR, points[2], points[3])
-        #     # pygame.draw.line(bb_surface, BB_COLOR, points[3], points[0])
-        #     # top
-        #     pygame.draw.line(bb_surface, BB_COLOR, points[4], points[5])
-        #     pygame.draw.line(bb_surface, BB_COLOR, points[5], points[6])
-        #     pygame.draw.line(bb_surface, BB_COLOR, points[6], points[7])
-        #     pygame.draw.line(bb_surface, BB_COLOR, points[7], points[4])
-        #     # base-top
-        #     pygame.draw.line(bb_surface, BB_COLOR, points[0], points[4])
-        #     pygame.draw.line(bb_surface, BB_COLOR, points[1], points[5])
-        #     pygame.draw.line(bb_surface, BB_COLOR, points[2], points[6])
-        #     pygame.draw.line(bb_surface, BB_COLOR, points[3], points[7])
         display.blit(bb_surface, (0, 0))
-
-    @staticmethod
-    def get_bounding_box(vehicle, camera):
-        """
-        Returns 3D bounding box for a vehicle based on camera view.
-        """
-        #print(camera)
-        bb_cords = ClientSideBoundingBoxes._create_bb_points(vehicle)
-        cords_x_y_z = ClientSideBoundingBoxes._vehicle_to_sensor(bb_cords, vehicle, camera)[:3, :]
-        cords_y_minus_z_x = np.concatenate([cords_x_y_z[1, :], -cords_x_y_z[2, :], cords_x_y_z[0, :]])
-        bbox = np.transpose(np.dot(camera.calibration, cords_y_minus_z_x))
-        camera_bbox = np.concatenate([bbox[:, 0] / bbox[:, 2], bbox[:, 1] / bbox[:, 2], bbox[:, 2]], axis=1)
-        return camera_bbox
-
-    @staticmethod
-    def _create_bb_points(vehicle):
-        """
-        Returns 3D bounding box for a vehicle.
-        """
-
-        cords = np.zeros((8, 4))
-        extent = vehicle.bounding_box.extent
-        cords[0, :] = np.array([extent.x, extent.y, -extent.z, 1])
-        cords[1, :] = np.array([-extent.x, extent.y, -extent.z, 1])
-        cords[2, :] = np.array([-extent.x, -extent.y, -extent.z, 1])
-        cords[3, :] = np.array([extent.x, -extent.y, -extent.z, 1])
-        cords[4, :] = np.array([extent.x, extent.y, extent.z, 1])
-        cords[5, :] = np.array([-extent.x, extent.y, extent.z, 1])
-        cords[6, :] = np.array([-extent.x, -extent.y, extent.z, 1])
-        cords[7, :] = np.array([extent.x, -extent.y, extent.z, 1])
-        return cords
-
-    @staticmethod
-    def _vehicle_to_sensor(cords, vehicle, sensor):
-        """
-        Transforms coordinates of a vehicle bounding box to sensor.
-        """
-
-        world_cord = ClientSideBoundingBoxes._vehicle_to_world(cords, vehicle)
-        sensor_cord = ClientSideBoundingBoxes._world_to_sensor(world_cord, sensor)
-        return sensor_cord
-
-    @staticmethod
-    def _vehicle_to_world(cords, vehicle):
-        """
-        Transforms coordinates of a vehicle bounding box to world.
-        """
-
-        bb_transform = carla.Transform(vehicle.bounding_box.location)
-        bb_vehicle_matrix = ClientSideBoundingBoxes.get_matrix(bb_transform)
-        vehicle_world_matrix = ClientSideBoundingBoxes.get_matrix(vehicle.get_transform())
-        bb_world_matrix = np.dot(vehicle_world_matrix, bb_vehicle_matrix)
-        world_cords = np.dot(bb_world_matrix, np.transpose(cords))
-        return world_cords
-
-    @staticmethod
-    def _world_to_sensor(cords, sensor):
-        """
-        Transforms world coordinates to sensor.
-        """
-
-        sensor_world_matrix = ClientSideBoundingBoxes.get_matrix(sensor.get_transform())
-        world_sensor_matrix = np.linalg.inv(sensor_world_matrix)
-        sensor_cords = np.dot(world_sensor_matrix, cords)
-        return sensor_cords
-
-    @staticmethod
-    def get_matrix(transform):
-        """
-        Creates matrix from carla transform.
-        """
-
-        rotation = transform.rotation
-        location = transform.location
-        c_y = np.cos(np.radians(rotation.yaw))
-        s_y = np.sin(np.radians(rotation.yaw))
-        c_r = np.cos(np.radians(rotation.roll))
-        s_r = np.sin(np.radians(rotation.roll))
-        c_p = np.cos(np.radians(rotation.pitch))
-        s_p = np.sin(np.radians(rotation.pitch))
-        matrix = np.matrix(np.identity(4))
-        matrix[0, 3] = location.x
-        matrix[1, 3] = location.y
-        matrix[2, 3] = location.z
-        matrix[0, 0] = c_p * c_y
-        matrix[0, 1] = c_y * s_p * s_r - s_y * c_r
-        matrix[0, 2] = -c_y * s_p * c_r - s_y * s_r
-        matrix[1, 0] = s_y * c_p
-        matrix[1, 1] = s_y * s_p * s_r + c_y * c_r
-        matrix[1, 2] = -s_y * s_p * c_r + c_y * s_r
-        matrix[2, 0] = s_p
-        matrix[2, 1] = -c_p * s_r
-        matrix[2, 2] = c_p * c_r
-        return matrix
 
 
 # ==============================================================================
 # -- BasicSynchronousClient ----------------------------------------------------
-# ==============================================================================
+# ============================================================================
+
+# class-names belonging to COCO if labels are needed for display
 class_names = ['BG', 'person', 'bicycle', 'car', 'motorcycle', 'airplane',
                'bus', 'train', 'truck', 'boat', 'traffic light',
                'fire hydrant', 'stop sign', 'parking meter', 'bench', 'bird',
@@ -308,6 +185,8 @@ class_names = ['BG', 'person', 'bicycle', 'car', 'motorcycle', 'airplane',
                'keyboard', 'cell phone', 'microwave', 'oven', 'toaster',
                'sink', 'refrigerator', 'book', 'clock', 'vase', 'scissors',
                'teddy bear', 'hair drier', 'toothbrush']
+
+
 
 class BasicSynchronousClient(object):
     """
@@ -430,26 +309,6 @@ class BasicSynchronousClient(object):
         print(r['rois'])
         return r['rois']
 
-    # @staticmethod
-    # def get_pred(self,image):
-    #     """
-    #     Getting the Y_pred from model and send list
-    #     """
-        
-
-    #     #import cv2
-    #     #image_pred=cv2.resize(image,(224,224))
-
-    #     #import numpy as np
-    #     #image_pred=np.reshape(image_pred,(1,224,224,3))
-
-    #     pred = self.predict(image)
-    #     pred_new=np.reshape(pred,(12544))
-    #     pred_new=np.asarray(pred_new)
-    #     return list(pred_new)
-
-
-
 
     # @staticmethod
     def draw_boxes(self,display, boxes):
@@ -525,8 +384,13 @@ class BasicSynchronousClient(object):
 
                 self.render(self.display)
                 
+                # get current image from camera on car
                 imgarr=self.get_image_array(self.image)
+
+                # predict bounding box coordinates from model
                 i=self.predict(imgarr)
+
+                #draw boxes according to result
                 ClientSideBoundingBoxes.draw_bounding_boxes(self.display, i)
 
                 pygame.display.flip()

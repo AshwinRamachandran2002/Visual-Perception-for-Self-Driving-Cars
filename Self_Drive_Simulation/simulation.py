@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 
-# Copyright (c) 2019 Aptiv
-#
-# This work is licensed under the terms of the MIT license.
-# For a copy, see <https://opensource.org/licenses/MIT>.
+# Client Side script for simulation 
+# from results generted from model
 
 """
 An example of client-side bounding boxes with basic car controls.
