@@ -1,17 +1,17 @@
 # Object Detection using Mask_Rcnn
 
 
-# Result of object detection
+## Result of object detection
+![detection](https://user-images.githubusercontent.com/77834936/126054308-a86af3ad-6cab-403a-8192-a8a93daa90cc.png)
 
 
 
-
-# 1. Dataset Collection
+## 1. Dataset Collection
 
 Dataset for transfer learning was used from [ aewsome-carla ](https://github.com/DanielHfnr/Carla-Object-Detection-Dataset)
 The repository includes 800 images and corresponding xml files containing bounding box coordinates and labels.
 
-# 2. Understanding Faster RCNN and Mask RCNN
+## 2. Understanding Faster RCNN and Mask RCNN
 
 Object Detection is to be done by using transfer learning from model trainded on COCO dataset. 
 
@@ -22,7 +22,7 @@ Modifications were made to various modules of the original repo to make it compa
 
 The modified mrcnn model can be found [here](/mrcnn)
 
-# 3. Preprocessing and training 
+## 3. Preprocessing and training 
 
 Preprocessing and training was done [here](/Object_Detection.ipynb)
 
@@ -36,7 +36,7 @@ The former resulted in more accuracy than latter.
 
 Here are the [weights](https://drive.google.com/file/d/10Xk5-3wapfE6O2YaKTz3psicrTQau4e2/view?usp=sharing) after additional training of COCO on my dataset
 
-# 4. Building Pipeline
+## 4. Building Pipeline
 
 Carla-Simulator was setup on Python3.5 and tensorflow 2.1.0.
 
