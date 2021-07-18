@@ -26,21 +26,15 @@ Application of models was done in the [carla-simulator](https://github.com/carla
 ## Object Detection
 
 Object detection was done through transfer learning from matterport's implementation of the Mask RCNN. 
-Training data was collected form [awesome-carla.org](https://github.com/Amin-Tgz/awesome-CARLA)
-
-Matterport's MRCNN was changed to make it compatible with tensorflow>=2.1.0 and python>=3.5.
 
 Fine tuning ran for 6 epochs on the additional training data. 
 
-[My trained model used for detection](https://drive.google.com/file/d/10Xk5-3wapfE6O2YaKTz3psicrTQau4e2/view?usp=sharing)
-
-[To use my modified version of matterport's mask rcnn](/Object_Detection/mrcnn)
-
+More information from corresponding README
 ## Self Driving Simulation
 
 Insipiration for the pipeline- [NVIDIA PilotNet](https://arxiv.org/pdf/1604.07316.pdf)
 
-Pre trained model usedd for transfer learning- [ Simulation in GTA5](https://github.com/Will-J-Gale/GTA5-Self-Driving-Car)
+More information from corresponding README
 
 
 
