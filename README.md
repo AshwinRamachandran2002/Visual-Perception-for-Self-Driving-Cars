@@ -25,6 +25,13 @@ Video is run at 2.5x to visualize
 
 ![detection4](https://user-images.githubusercontent.com/77834936/126171047-26d8608a-dca2-40e3-81ed-de395ca5385d.jpg)
 
+![detection4](https://user-images.githubusercontent.com/77834936/126440956-4e8c1e90-d615-46d0-9aa4-d87e088c1a56.jpg)
+
+![detection5](https://user-images.githubusercontent.com/77834936/126440981-8c37d694-a651-42a6-855a-8b3881b91a33.jpg)
+
+![detection6](https://user-images.githubusercontent.com/77834936/126440983-401e43c4-e3c5-43bc-a965-dc0c6675623c.jpg)
+
+![detection7](https://user-images.githubusercontent.com/77834936/126440986-c0d7f3e5-1e18-4a5a-b974-e98071fbd793.jpg)
 
 
 ## CARLA SIMULATOR
